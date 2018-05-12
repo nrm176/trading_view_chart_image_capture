@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 const env = require('node-env-file');
 const moment = require('moment');
+const fs = require('fs')
 
 console.logCopy = console.log.bind(console);
 console.log = function (data) {
@@ -15,7 +16,11 @@ const USERID = process.env.UID_TRADINGVIEW;
 const PASSWORD = process.env.PASSWORD_TRADINGVIEW;
 const FAKE_USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_1) AppleWebKit/604.3.5 (KHTML, like Gecko) Version/11.0.1 Safari/604.3.5';
 
-const codes = [6301, 6302, 6305, 6326, 6361, 6366]
+
+const readCodeData = async () => {
+    const data = await fs.readFileSync('./codes.data', 'utf-8')
+    return data.replace(/\r?\n|\r/g, '').split(',').map((e)=>{return e.trim()});
+}
 
 const launchBrowser = async () => {
     const browser = await puppeteer.launch({headless: true});
@@ -55,6 +60,7 @@ const fetchChartImages = async (page, code) => {
 }
 
 const run = async () => {
+    const codes = await readCodeData();
     const browser = await launchBrowser();
     const page = await loginFirst(browser)
     for (let code of codes) {
