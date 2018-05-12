@@ -1,1 +1,7 @@
 images
+codes.data
+*.png
+.gitignore
+.idea/workspace.xml
+/.idea/workspace.xml
+/.gitignore
