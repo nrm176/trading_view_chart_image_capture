@@ -45,17 +45,26 @@ const loginFirst = async (browser) => {
     return page;
 }
 
+const createDirIfNotExist = async() => {
+    const today = moment().format('YY-MM-DD')
+    const dir = `./images/${today}`
+    if (!fs.existsSync(dir)){
+        await fs.mkdirSync(dir);
+    }
+    return dir
+}
+
 const fetchChartImages = async (page, code) => {
     await page.goto(`https://www.tradingview.com/chart/?symbol=TSE:${code}`, {"waitUntil": "networkidle0"});
     await page.waitFor(3000);
     const chartArea = await page.$('table.chart-markup-table')
     const clipArea = await chartArea.boundingBox();
+    const base_dir = await createDirIfNotExist();
     await page.screenshot({
-        path: './' + code + '_tradingview_' + moment().format('YY-MM-DD h:mm') + '.png',
+        path: `${base_dir}/${code}_tv_${moment().format('YY-MM-DD h:mm')}.png`,
         clip: clipArea
     });
-    await page.waitFor(500)
-    console.log("retried a chart image for " + code)
+    console.log("fetching a chart image for " + code)
 
 }
 
@@ -67,6 +76,14 @@ const run = async () => {
         await fetchChartImages(page, code)
     }
     await browser.close();
+
+    //
+    // Promise.all(codes.map(async (code)=> {
+    //     const browser = await launchBrowser();
+    //     const page = await loginFirst(browser)
+    //     await fetchChartImages(page, code)
+    //     await browser.close();
+    // }))
 
 }
 

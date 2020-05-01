@@ -5,3 +5,5 @@ codes.data
 .idea/workspace.xml
 /.idea/workspace.xml
 /.gitignore
+*.data*
+images_*
